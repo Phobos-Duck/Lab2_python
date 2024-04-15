@@ -21,13 +21,15 @@ async def on_text_message(message: types.Message):
     answer_lek = message.text
     await message.reply(f"Понял! Попробую найти {answer_lek}")
     parser.parse(answer_lek)
+
+@dp.message(F.text == )
     for key, value in in_user.items():
         await message.answer(f"Вот например{key} по цене {value}")
 async def main():
     await dp.start_polling(bot)
 
-def filtered(**filtered):
-    for key, value in filtered.items():
-        in_user[key] = value
+def filter(key, value):
+    in_user[key] = value
 def start():
+
     asyncio.run(main())

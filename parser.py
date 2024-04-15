@@ -24,7 +24,8 @@ def parse(word):
             try:
                 names = data.find('span', {'itemprop': 'name'}).text
                 buy = data.find('div', {'class': 'ui-price__content'}).text
-                filtered[names] = buy
-                bot.filtered(filtered)
+                bot.filter(names, buy)
             except AttributeError:
                 return False
+
+
