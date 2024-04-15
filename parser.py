@@ -18,7 +18,6 @@ def parse(word):
     connect = user_agent(word)
     if connect.status_code == 200:
         soup = BeautifulSoup(connect.text, "html.parser")
-        all_image = soup.findAll('div', class_="product-preview__header")
         all_medicines = soup.findAll('div', class_="product-preview ui-panel ui-panel_size_s ui-panel_clickable")
         for data in all_medicines:
             try:

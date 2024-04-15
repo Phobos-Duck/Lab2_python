@@ -4,6 +4,7 @@ from aiogram.fsm.state import StatesGroup, State
 import bot_main
 import parser
 import keyboards
+import parser_img
 dp = Dispatcher()
 class SearchState(StatesGroup):
     vibor = State()
@@ -15,6 +16,7 @@ bot = Bot(token='6994195142:AAGS4WZuOaYNzc0sOEd4F_cPoWkS8rxqHqg')
 async def on_text_message(message: types.Message, state: FSMContext):
     answer_lek = message.text
     parser.parse(answer_lek)
+    parser_img.parse(answer_lek)
     await message.reply(f"Понял! Попробую найти {answer_lek}")
     answer_lek = message.text
     await message.reply("Я нашел несколько вариантов. Показать?", reply_markup=keyboards.make_keyboard_yn())

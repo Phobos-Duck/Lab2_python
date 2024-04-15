@@ -21,6 +21,7 @@ storage = MemoryStorage()
 dp.message.middleware(ChatActionMiddleware())
 check1 = 0
 check2 = 1
+in_img = []
 
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
@@ -44,20 +45,26 @@ async def yes(message: types.Message, state: FSMContext):
     if check1 == 0:
         key = list(in_user.keys())[current_index]
         value = in_user[key]
-        await message.answer(f"Вот например {key} по цене {value}")
+        image_url = in_img[current_index]  # URL-адрес изображения
+        text = f"Вот например {key} по цене {value}"
+        await bot.send_photo(chat_id=message.chat.id, photo=image_url, caption=text)
         current_index += 1
     elif check1 == 1:
         if check2 == 1:
             current_index -= 2
             key = list(in_user.keys())[current_index]
             value = in_user[key]
-            await message.answer(f"Вот например {key} по цене {value}")
+            image_url = in_img[current_index]  # URL-адрес изображения
+            text = f"Вот например {key} по цене {value}"
+            await bot.send_photo(chat_id=message.chat.id, photo=image_url, caption=text)
             await state.update_data(check2=0)
         else:
             current_index -= 1
             key = list(in_user.keys())[current_index]
             value = in_user[key]
-            await message.answer(f"Вот например {key} по цене {value}")
+            image_url = in_img[current_index]  # URL-адрес изображения
+            text = f"Вот например {key} по цене {value}"
+            await bot.send_photo(chat_id=message.chat.id, photo=image_url, caption=text)
 
     await state.update_data(index=current_index)
 
@@ -75,7 +82,7 @@ def filter(key, value):
     return in_user
 
 def img(x):
-    print(x)
+    in_img.append(x)
 async def main():
     await dp.start_polling(bot)
 def start():

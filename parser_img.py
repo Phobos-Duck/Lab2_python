@@ -18,10 +18,13 @@ def parse(word):
     connect = user_agent(word)
     if connect.status_code == 200:
         soup = BeautifulSoup(connect.text, "html.parser")
-        all_image = soup.findAll('div', class_="product-preview__header")
+        all_image = soup.findAll('div', class_="product-preview ui-panel ui-panel_size_s ui-panel_clickable")
         for data2 in all_image:
             try:
-                image = data2.find('img', {'class': '"ui-lazy-image"'}).get("src")
-                bot_main.img(image)
+                # Получаем относительный путь к изображению
+                all_image = data2.find("link", {"itemprop":"image"}).get("href")
+                base_url = "https://omsk.uteka.ru"
+                image_url = base_url + all_image
+                bot_main.img(image_url)
             except AttributeError:
                 return False
