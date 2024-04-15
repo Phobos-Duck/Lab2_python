@@ -19,18 +19,9 @@ def parse(word):
     if connect.status_code == 200:
         soup = BeautifulSoup(connect.text, "html.parser")
         all_image = soup.findAll('div', class_="product-preview__header")
-        all_medicines = soup.findAll('div', class_="product-preview ui-panel ui-panel_size_s ui-panel_clickable")
-        for data in all_medicines:
+        for data2 in all_image:
             try:
-                names = data.find('span', {'itemprop': 'name'}).text
-                buy = data.find('div', {'class': 'ui-price__content'}).text
-                bot_main.filter(names, buy)
+                image = data2.find('img', {'class': '"ui-lazy-image"'}).get("src")
+                bot_main.img(image)
             except AttributeError:
                 return False
-
-
-
-
-
-
-

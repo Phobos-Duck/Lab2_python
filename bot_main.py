@@ -6,7 +6,6 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.utils.chat_action import ChatActionMiddleware
-import parser
 import keyboards
 import yes_no_fun
 
@@ -32,8 +31,6 @@ async def cmd_start(message: types.Message):
 @dp.message(StateFilter(None), F.text)
 async def on_text_message(message: types.Message, state: FSMContext):
     await yes_no_fun.on_text_message(message, state)
-
-
 
 @dp.message(lambda message: message.text == "Да", SearchState.vibor)
 async def yes(message: types.Message, state: FSMContext):

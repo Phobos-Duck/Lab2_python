@@ -19,6 +19,7 @@ async def on_text_message(message: types.Message, state: FSMContext):
     answer_lek = message.text
     await message.reply("Я нашел несколько вариантов. Показать?", reply_markup=keyboards.make_keyboard_yn())
     await state.set_state(SearchState.vibor)
+
 async def yes_no_back(message: types.Message, state: FSMContext):
     data = await state.get_data()
     current_index = data.get("index", 0)
