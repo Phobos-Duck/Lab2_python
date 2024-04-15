@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import random
-import bot
+import bot_main
 
 def user_agent(word):
     user_agents = ['Mozilla/5.0 (iPhone; CPU iPhone OS 5_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9B179 Safari/7534.48.3'
@@ -16,16 +16,28 @@ def user_agent(word):
 
 def parse(word):
     connect = user_agent(word)
-    filtered = {}
     if connect.status_code == 200:
         soup = BeautifulSoup(connect.text, "html.parser")
-        all = soup.findAll('div', class_= "product-preview ui-panel ui-panel_size_s ui-panel_clickable")
-        for data in all:
+        all_image = soup.findAll('div', class_="product-preview__header")
+        all_medicines = soup.findAll('div', class_="product-preview ui-panel ui-panel_size_s ui-panel_clickable")
+        for data2 in all_image:
+            try:
+                image = data2.find('img', {'class': '"ui-lazy-image"'}).get("src")
+                bot_main.img(image)
+            except AttributeError:
+                return False
+
+        for data in all_medicines:
             try:
                 names = data.find('span', {'itemprop': 'name'}).text
                 buy = data.find('div', {'class': 'ui-price__content'}).text
-                bot.filter(names, buy)
+                bot_main.filter(names, buy)
             except AttributeError:
                 return False
+
+
+
+
+
 
 
