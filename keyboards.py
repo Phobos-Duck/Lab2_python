@@ -1,11 +1,11 @@
-from aiogram import types
+from aiogram import types, Dispatcher
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 import bot_main
 import yes_no_fun
 
-all_url = {}
 
+dp = Dispatcher()
 def make_keyboard_yn():
     kb = [
         [
@@ -28,14 +28,12 @@ def make_keyboard_ynb():
     ]
     return types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True, input_field_placeholder="Выберите действие")
 
-def make_keyboard_url(key):
-    kb = [[InlineKeyboardButton(text="Переход на сайт", callback_data=f"{all_url[key]}")]]
+def make_keyboard_url(url):
+    kb = [[InlineKeyboardButton(text="Переход на сайт", url=url)]]
     inline_kb_full = types.InlineKeyboardMarkup(inline_keyboard=kb)
     return inline_kb_full
 
 
-def url_forms(key, value):
-    all_url[key] = value
-    return all_url
+
 
 

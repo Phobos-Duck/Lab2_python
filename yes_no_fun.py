@@ -9,7 +9,7 @@ dp = Dispatcher()
 class SearchState(StatesGroup):
     vibor = State()
 
-
+all_url = []
 bot = Bot(token='6994195142:AAGS4WZuOaYNzc0sOEd4F_cPoWkS8rxqHqg')
 
 async def on_text_message(message: types.Message, state: FSMContext):
@@ -41,5 +41,10 @@ async def yes_no_back(message: types.Message, state: FSMContext):
             await state.update_data(check1=0)
             await message.answer("Нельзя вернуться назад.")
     elif message.text == "Я определился на текущем":
-        await bot_main.url(message)
+        data = await state.get_data()
+        current_index = data.get("index", 0)
+        url = all_url[current_index]
+        await message.answer("Переход на сайт", reply_markup=keyboards.make_keyboard_url(url))
 
+def url_forms(value):
+    all_url.append(value)

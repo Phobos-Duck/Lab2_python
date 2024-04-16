@@ -83,9 +83,6 @@ async def ask_for_more(message: types.Message):
 async def handle_yes_no(message: types.Message, state: FSMContext):
     await yes_no_fun.yes_no_back(message,state)
 
-async def url(message: types.Message):
-    keyboard = keyboards.make_keyboard_url(keys(in_user, current_index))
-    await message.answer("Хорошо, вот ссылка для дальнейшего бронирования", reply_markup=keyboard)
 
 def filter(key, value):
     in_user[key] = value

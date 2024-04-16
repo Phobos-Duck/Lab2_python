@@ -28,6 +28,6 @@ def parse(word):
                 all_image = data.find("a", {"itemprop":"url"}).get("href")
                 base_url = "https://omsk.uteka.ru"
                 _url = base_url + all_image
-                keyboards.url_forms(all_names, _url)
+                yes_no_fun.url_forms(_url)
             except AttributeError:
                 return False
