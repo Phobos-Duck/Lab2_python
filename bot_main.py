@@ -22,11 +22,13 @@ dp.message.middleware(ChatActionMiddleware())
 check1 = 0
 check2 = 1
 in_img = []
+current_index = 0
 
 @dp.message(Command("start"))
-async def cmd_start(message: types.Message):
+async def cmd_start(message: types.Message, state: FSMContext):
     await message.answer("Добро пожаловать! Вас приветствует сервис по поиску лекарств в аптеке uteka.ru")
     await message.answer("Чтобы я начал работу, подскажите, что вы ищите?")
+    await state.clear()
 
 
 @dp.message(StateFilter(None), F.text)
@@ -43,7 +45,7 @@ async def yes(message: types.Message, state: FSMContext):
     check1 = data.get("check1", 0)
     check2 = data.get("check2", 1)
     if check1 == 0:
-        key = list(in_user.keys())[current_index]
+        key = keys(in_user, current_index)
         value = in_user[key]
         image_url = in_img[current_index]  # URL-адрес изображения
         text = f"Вот например {key} по цене {value}"
@@ -52,7 +54,7 @@ async def yes(message: types.Message, state: FSMContext):
     elif check1 == 1:
         if check2 == 1:
             current_index -= 2
-            key = list(in_user.keys())[current_index]
+            key = keys(in_user, current_index)
             value = in_user[key]
             image_url = in_img[current_index]  # URL-адрес изображения
             text = f"Вот например {key} по цене {value}"
@@ -60,7 +62,7 @@ async def yes(message: types.Message, state: FSMContext):
             await state.update_data(check2=0)
         else:
             current_index -= 1
-            key = list(in_user.keys())[current_index]
+            key = keys(in_user, current_index)
             value = in_user[key]
             image_url = in_img[current_index]  # URL-адрес изображения
             text = f"Вот например {key} по цене {value}"
@@ -69,13 +71,21 @@ async def yes(message: types.Message, state: FSMContext):
     await state.update_data(index=current_index)
 
     await ask_for_more(message)
+@dp.message(lambda message: message.text == "Нет", SearchState.vibor)
+async def no(message: types.Message, state: FSMContext):
+    await message.answer("Мне жаль, что я не смог вам ничем помочь :(")
+    await state.clear()
 
 async def ask_for_more(message: types.Message):
     await message.answer("Хотите увидеть ещё варианты?", reply_markup=keyboards.make_keyboard_ynb())
 
-@dp.message(lambda message: message.text in {"Да", "Нет", "Назад"}, SearchState.vibor)
+@dp.message(lambda message: message.text in {"Да", "Нет", "Назад", "Я определился на текущем"}, SearchState.vibor)
 async def handle_yes_no(message: types.Message, state: FSMContext):
     await yes_no_fun.yes_no_back(message,state)
+
+async def url(message: types.Message):
+    keyboard = keyboards.make_keyboard_url(keys(in_user, current_index))
+    await message.answer("Хорошо, вот ссылка для дальнейшего бронирования", reply_markup=keyboard)
 
 def filter(key, value):
     in_user[key] = value
@@ -87,3 +97,6 @@ async def main():
     await dp.start_polling(bot)
 def start():
     return asyncio.run(main())
+def keys(in_user, current_index):
+    key = list(in_user.keys())
+    return key[current_index]
