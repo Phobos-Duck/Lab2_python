@@ -27,12 +27,14 @@ current_index = 0
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message, state: FSMContext):
     await message.answer("Добро пожаловать! Вас приветствует сервис по поиску лекарств в аптеке uteka.ru")
+    await message.answer("Вот немного обо мне: я могу найти как лекарство по его названию, так и найти что-то, подходящее вашим симптомам. "
+                         "К сожалению, я не умею осуществлять бронь напярмую, но я могу упростить вам поиск лекарств на сервисе uteka.ru и вывести краткую информацию о лекарствах, которые есть в наличии в аптеках города Омск")
+    await message.answer("Если вы уже искали лекарства, можно не писать снова /start, достаточно отправить название лекарства или симптом в чат. Я тут же начну поиск по вашему запросу.")
     await message.answer("Чтобы я начал работу, подскажите, что вы ищите?")
-    await state.clear()
-
 
 @dp.message(StateFilter(None), F.text)
 async def on_text_message(message: types.Message, state: FSMContext):
+    await state.clear()
     await yes_no_fun.on_text_message(message, state)
 
 @dp.message(lambda message: message.text == "Да", SearchState.vibor)
@@ -73,7 +75,9 @@ async def yes(message: types.Message, state: FSMContext):
     await ask_for_more(message)
 @dp.message(lambda message: message.text == "Нет", SearchState.vibor)
 async def no(message: types.Message, state: FSMContext):
-    await message.answer("Мне жаль, что я не смог вам ничем помочь :(")
+    await message.answer("Мне жаль, что я не смог вам ничем помочь :(", reply_markup=types.ReplyKeyboardRemove())
+    yes_no_fun.all_url.clear()
+    clear_list()
     await state.clear()
 
 async def ask_for_more(message: types.Message):
@@ -88,6 +92,9 @@ def filter(key, value):
     in_user[key] = value
     return in_user
 
+def clear_list():
+    in_user.clear()
+    in_img.clear()
 def img(x):
     in_img.append(x)
 async def main():

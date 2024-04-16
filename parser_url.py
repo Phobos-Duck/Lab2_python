@@ -1,8 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
 import random
-import bot_main
-import keyboards
 import yes_no_fun
 
 
@@ -13,7 +11,7 @@ def user_agent(word):
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
         'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36']
     url_new = f"https://omsk.uteka.ru/search/?query={word}"
-    HEADER = {'User-Agent': random.choice(user_agents)}
+    HEADER = {'User-Agent': random.choice(user_agents), 'From': 'Москва'}
     page = requests.get(url_new, data=HEADER)
     return page
 
@@ -24,10 +22,9 @@ def parse(word):
         all_url = soup.findAll('div', class_="product-preview__inner")
         for data in all_url:
             try:
-                all_names = data.find("span", {"itemprop":"name"}).text
                 all_image = data.find("a", {"itemprop":"url"}).get("href")
                 base_url = "https://omsk.uteka.ru"
                 _url = base_url + all_image
                 yes_no_fun.url_forms(_url)
             except AttributeError:
-                return False
+                continue

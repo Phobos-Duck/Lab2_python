@@ -1,8 +1,5 @@
 from aiogram import types, Dispatcher
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.utils.keyboard import InlineKeyboardBuilder
-import bot_main
-import yes_no_fun
+from aiogram.types import InlineKeyboardButton
 
 
 dp = Dispatcher()

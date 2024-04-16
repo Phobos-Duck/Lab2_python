@@ -27,4 +27,4 @@ def parse(word):
                 image_url = base_url + all_image
                 bot_main.img(image_url)
             except AttributeError:
-                return False
+                continue

@@ -15,6 +15,7 @@ def user_agent(word):
     return page
 
 def parse(word):
+    error = " Попробуйте ввести другое название препарата или симптом"
     connect = user_agent(word)
     if connect.status_code == 200:
         soup = BeautifulSoup(connect.text, "html.parser")
@@ -23,9 +24,14 @@ def parse(word):
             try:
                 names = data.find('span', {'itemprop': 'name'}).text
                 buy = data.find('div', {'class': 'ui-price__content'}).text
-                bot_main.filter(names, buy)
+                error_find = data.find('div', {'class': 'ui-placeholder__text ui-text ui-text_size_l ui-text_type_low ui-text_responsive'}).text
+                if error_find == error:
+                    return False
+                else:
+                    bot_main.filter(names, buy)
             except AttributeError:
-                return False
+                continue
+
 
 
 
