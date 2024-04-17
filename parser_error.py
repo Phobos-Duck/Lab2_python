@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
 import random
-import bot_main
 
 def user_agent(word):
     user_agents = ['Mozilla/5.0 (iPhone; CPU iPhone OS 5_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9B179 Safari/7534.48.3'
@@ -15,22 +14,17 @@ def user_agent(word):
     return page
 
 def parse(word):
+    text = (f'По вашему запросу «{word}» ничего не найдено').split()
     connect = user_agent(word)
     if connect.status_code == 200:
         soup = BeautifulSoup(connect.text, "html.parser")
-        all_medicines = soup.findAll('div', class_="product-preview ui-panel ui-panel_size_s ui-panel_clickable")
-        for data in all_medicines:
+        error_find = soup.findAll('div', class_="search-page__empty ui-container ui-container_size_l")
+        for data in error_find:
             try:
-                names = data.find('span', {'itemprop': 'name'}).text
-                buy = data.find('div', {'class': 'ui-price__content'}).text
-                bot_main.filter(names, buy)
+                error = data.find('div', {'class': 'ui-placeholder__title ui-title ui-title_size_m ui-title_type_low ui-title_responsive'}).text.split()
+                if error == text:
+                    return False
+                else:
+                    return True
             except AttributeError:
-                continue
-
-
-
-
-
-
-
-
+                return False

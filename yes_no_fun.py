@@ -4,6 +4,7 @@ from aiogram.fsm.state import StatesGroup, State
 import bot_main
 import parser
 import keyboards
+import parser_error
 import parser_img
 import parser_url
 dp = Dispatcher()
@@ -15,11 +16,12 @@ bot = Bot(token='6994195142:AAGS4WZuOaYNzc0sOEd4F_cPoWkS8rxqHqg')
 
 async def on_text_message(message: types.Message, state: FSMContext):
     answer_lek = message.text
-    p_n = parser.parse(answer_lek)
-    p_u = parser_url.parse(answer_lek)
-    p_i = parser_img.parse(answer_lek)
+    parser.parse(answer_lek)
+    parser_url.parse(answer_lek)
+    parser_img.parse(answer_lek)
+    p_e = parser_error.parse(answer_lek)
     await message.reply(f"Понял! Попробую найти {answer_lek}")
-    if(p_n == False):
+    if(p_e == False):
         all_url.clear()
         bot_main.clear_list()
         await message.answer("Извините, я ничего не смог найти по вашему запросу. Попробуйте снова ввести симптом или название препарата.")
