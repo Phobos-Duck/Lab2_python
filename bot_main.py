@@ -44,35 +44,36 @@ async def yes(message: types.Message, state: FSMContext):
     if current_index >= len(in_user):
         await message.answer("Больше вариантов нет.")
         return
-    check1 = data.get("check1", 0)
-    check2 = data.get("check2", 1)
-    if check1 == 0:
-        key = keys(in_user, current_index)
-        value = in_user[key]
-        image_url = in_img[current_index]  # URL-адрес изображения
-        text = f"Вот например {key} по цене {value}"
-        await bot.send_photo(chat_id=message.chat.id, photo=image_url, caption=text)
-        current_index += 1
-    elif check1 == 1:
-        if check2 == 1:
-            current_index -= 2
+    else:
+        check1 = data.get("check1", 0)
+        check2 = data.get("check2", 1)
+        if check1 == 0:
             key = keys(in_user, current_index)
             value = in_user[key]
             image_url = in_img[current_index]  # URL-адрес изображения
             text = f"Вот например {key} по цене {value}"
             await bot.send_photo(chat_id=message.chat.id, photo=image_url, caption=text)
-            await state.update_data(check2=0)
-        else:
-            current_index -= 1
-            key = keys(in_user, current_index)
-            value = in_user[key]
-            image_url = in_img[current_index]  # URL-адрес изображения
-            text = f"Вот например {key} по цене {value}"
-            await bot.send_photo(chat_id=message.chat.id, photo=image_url, caption=text)
+            current_index += 1
+        elif check1 == 1:
+            if check2 == 1:
+                current_index -= 2
+                key = keys(in_user, current_index)
+                value = in_user[key]
+                image_url = in_img[current_index]  # URL-адрес изображения
+                text = f"Вот например {key} по цене {value}"
+                await bot.send_photo(chat_id=message.chat.id, photo=image_url, caption=text)
+                await state.update_data(check2=0)
+            else:
+                current_index -= 1
+                key = keys(in_user, current_index)
+                value = in_user[key]
+                image_url = in_img[current_index]  # URL-адрес изображения
+                text = f"Вот например {key} по цене {value}"
+                await bot.send_photo(chat_id=message.chat.id, photo=image_url, caption=text)
 
-    await state.update_data(index=current_index)
+        await state.update_data(index=current_index)
 
-    await ask_for_more(message)
+        await ask_for_more(message)
 @dp.message(lambda message: message.text == "Нет", SearchState.vibor)
 async def no(message: types.Message, state: FSMContext):
     await message.answer("Мне жаль, что я не смог вам ничем помочь :(", reply_markup=types.ReplyKeyboardRemove())
