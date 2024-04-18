@@ -12,6 +12,14 @@ def make_keyboard_yn():
     ]
     return types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True, input_field_placeholder="Выберите действие")
 
+def yes_no():
+    kb = [
+        [
+            types.KeyboardButton(text="Да, это то"),
+            types.KeyboardButton(text="Не то, что нужно")
+        ],
+    ]
+    return types.ReplyKeyboardMarkup(keyboard=kb,resize_keyboard=True, input_field_placeholder="Выберите действие")
 
 def make_keyboard_ynb():
     kb = [

@@ -44,6 +44,12 @@ async def yes(message: types.Message, state: FSMContext):
     if current_index >= len(in_user):
         await message.answer("Больше вариантов нет.")
         return
+    if len(in_user) == 1:
+        key = keys(in_user, current_index)
+        value = in_user[key]
+        image_url = in_img[current_index]  # URL-адрес изображения
+        text = f"Вот например {key} по цене {value}"
+        await bot.send_photo(chat_id=message.chat.id, photo=image_url, caption=text)
     else:
         check1 = data.get("check1", 0)
         check2 = data.get("check2", 1)
@@ -63,6 +69,7 @@ async def yes(message: types.Message, state: FSMContext):
                 text = f"Вот например {key} по цене {value}"
                 await bot.send_photo(chat_id=message.chat.id, photo=image_url, caption=text)
                 await state.update_data(check2=0)
+                await ask_for_more(message)
             else:
                 current_index -= 1
                 key = keys(in_user, current_index)
@@ -70,10 +77,10 @@ async def yes(message: types.Message, state: FSMContext):
                 image_url = in_img[current_index]  # URL-адрес изображения
                 text = f"Вот например {key} по цене {value}"
                 await bot.send_photo(chat_id=message.chat.id, photo=image_url, caption=text)
-
         await state.update_data(index=current_index)
+    await ask_for_more(message)
 
-        await ask_for_more(message)
+
 @dp.message(lambda message: message.text == "Нет", SearchState.vibor)
 async def no(message: types.Message, state: FSMContext):
     await message.answer("Мне жаль, что я не смог вам ничем помочь :(", reply_markup=types.ReplyKeyboardRemove())
@@ -82,9 +89,12 @@ async def no(message: types.Message, state: FSMContext):
     await state.clear()
 
 async def ask_for_more(message: types.Message):
-    await message.answer("Хотите увидеть ещё варианты?", reply_markup=keyboards.make_keyboard_ynb())
+    if len(in_user) == 1:
+        await message.answer("Это все варианты, которые я смог найти", reply_markup=keyboards.yes_no())
+    else:
+        await message.answer("Хотите увидеть ещё варианты?", reply_markup=keyboards.make_keyboard_ynb())
 
-@dp.message(lambda message: message.text in {"Да", "Нет", "Назад", "Я определился на текущем"}, SearchState.vibor)
+@dp.message(lambda message: message.text in {"Да", "Нет", "Назад", "Я определился на текущем", "Не то, что нужно", "Да, это то"}, SearchState.vibor)
 async def handle_yes_no(message: types.Message, state: FSMContext):
     await yes_no_fun.yes_no_back(message,state)
 

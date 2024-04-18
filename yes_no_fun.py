@@ -37,10 +37,7 @@ async def yes_no_back(message: types.Message, state: FSMContext):
         await state.update_data(check1=0)
         await state.update_data(check2=1)
     elif message.text == "Нет":
-        await message.answer("Вы не нашли то что искали? Извините,что не смог ничем помочь:(", reply_markup=types.ReplyKeyboardRemove())
-        all_url.clear()
-        bot_main.clear_list()
-        await state.clear()
+        await bot_main.no(message, state)
     elif message.text == "Назад":
         if current_index > 0:
             await state.update_data(check1=1)
@@ -58,6 +55,18 @@ async def yes_no_back(message: types.Message, state: FSMContext):
         bot_main.clear_list()
         all_url.clear()
         await state.clear()
-
+    elif message.text == 'Не то, что нужно':
+        await bot_main.no(message, state)
+    elif message.text == "Да, это то":
+        data = await state.get_data()
+        current_index = data.get("index", 0)
+        url = all_url[current_index]
+        await message.answer("Я рад, что смог вам помочь! Вот ссылка для перехода на сайт.",
+                             reply_markup=keyboards.make_keyboard_url(url))
+        await message.answer("Если хотите снова найти что-то, напишите название препарата или симптом",
+                             reply_markup=types.ReplyKeyboardRemove())
+        bot_main.clear_list()
+        all_url.clear()
+        await state.clear()
 def url_forms(value):
     all_url.append(value)
