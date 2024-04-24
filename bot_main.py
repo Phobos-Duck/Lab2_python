@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from aiogram.fsm.context import FSMContext
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command, StateFilter
@@ -13,6 +14,7 @@ class SearchState(StatesGroup):
 
 answer_lek = ""
 in_user = {}
+logging.basicConfig(level=logging.INFO)
 bot = Bot(token='6994195142:AAGS4WZuOaYNzc0sOEd4F_cPoWkS8rxqHqg')
 dp = Dispatcher()
 storage = MemoryStorage()
@@ -23,7 +25,7 @@ in_img = []
 current_index = 0
 
 @dp.message(Command("start"))
-async def cmd_start(message: types.Message):
+async def cmd_start(message: types.Message, state: FSMContext):
     await message.answer("Добро пожаловать! Вас приветствует сервис по поиску лекарств в аптеке uteka.ru")
     await message.answer("Вот немного обо мне: я могу найти как лекарство по его названию, так и найти что-то, подходящее вашим симптомам. "
                          "К сожалению, я не умею осуществлять бронь напярмую, но я могу упростить вам поиск лекарств на сервисе uteka.ru и вывести краткую информацию о лекарствах, которые есть в наличии в аптеках города Омск")
